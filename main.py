@@ -16,7 +16,8 @@ clock = pygame.time.Clock()
 
 rend = Renderer(screen)
 rend.setShader(vertex_shader, fragmet_shader)
-
+actualvertex=vertex_shader
+actualfragment=fragmet_shader
 obj = Obj("cat.obj")
 gato = Model(obj.assemble())
 gato.loadTexture("Cat.jpg")
@@ -41,15 +42,38 @@ while isRunning:
             elif event.key == pygame.K_SPACE:
                 rend.toggleFilledMode()
             elif event.key == pygame.K_1:
-             
-                rend.setShader(vertex_shader1, fragmet_shader)
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualvertex=vertex_shader1
+                rend.setShader(vertex_shader1, actualfragment)
             elif event.key == pygame.K_2:
-                
-                pass
+                rend.setShader(vertex_shader2, fragmet_shader)
+                actualvertex=vertex_shader2
+                rend.setShader(vertex_shader2, actualfragment)
 
             elif event.key == pygame.K_3:
-                
-                pass
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualvertex=vertex_shader3
+                rend.setShader(vertex_shader3, actualfragment)
+            elif event.key == pygame.K_4:
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualvertex=vertex_shader4
+                rend.setShader(vertex_shader4, actualfragment)   
+            elif event.key == pygame.K_5:
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualfragment=fragmet_shader1
+                rend.setShader(actualvertex, fragmet_shader1) 
+            elif event.key == pygame.K_6:
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualfragment=fragmet_shader2
+                rend.setShader(actualvertex, fragmet_shader2) 
+            elif event.key == pygame.K_7:
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualfragment=fragmet_shader3
+                rend.setShader(actualvertex, fragmet_shader3)    
+            elif event.key == pygame.K_8:
+                rend.setShader(vertex_shader, fragmet_shader)
+                actualfragment=fragmet_shader4
+                rend.setShader(actualvertex, fragmet_shader4)      
 
     if keys[K_a]:
         rend.camPosition.x += 5 * deltaTime
@@ -66,8 +90,6 @@ while isRunning:
     elif keys[K_e]:
         rend.camPosition.z -= 5 * deltaTime
 
-    # Actualiza la rotación del modelo si se desea
-    # gato.rotation.y += 45 * deltaTime
 
     rend.elapsedTime += deltaTime
 

@@ -5,14 +5,11 @@ layout (location = 0 ) in vec3 position;
 layout (location = 1 ) in vec2 texCoords;
 layout (location = 2 ) in vec3 normals;
 
-
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform float time;
-
 
 out vec2 UVs;
 out vec3 outNormals;
@@ -24,11 +21,7 @@ void main()
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * newPos;
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
-
-
 }
-
-
 '''
 
 fragmet_shader = '''
@@ -50,16 +43,12 @@ void main()
 }
 '''
 
-
-
-
-
 fragmet_shader1 = '''
 #version 450 core
 
 uniform sampler2D particleTexture;
-uniform vec3 glowColor; // Color de la fosforescencia
-uniform float glowIntensity; // Intensidad del brillo
+uniform vec3 glowColor;
+uniform float glowIntensity;
 
 in vec2 UVs;
 
@@ -69,20 +58,13 @@ void main()
 {
     vec4 texColor = texture(particleTexture, UVs);
 
-
     vec3 glow = glowColor * glowIntensity;
-
 
     fragColor = vec4(texColor.rgb + glow, texColor.a);
 }
-
-
-
 '''
 
-
 vertex_shader1 = '''
-
 #version 450 core
 
 layout (location = 0) in vec3 position;
@@ -100,10 +82,8 @@ out vec3 outNormals;
 
 void main()
 {
-    // Transformación de la posición
     vec3 transformedPosition = position;
-    
-    // Por ejemplo, aplicamos una deformación sencilla basada en el tiempo
+
     transformedPosition.x += sin(time + position.x);
     transformedPosition.y += cos(time + position.y);
 
@@ -113,6 +93,171 @@ void main()
     UVs = texCoords;
     outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
 }
+'''
 
+vertex_shader2 = '''
+#version 450 core
 
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 texCoords;
+layout (location = 2) in vec3 normals;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform float time;
+
+out vec2 UVs;
+out vec3 outNormals;
+
+void main()
+{
+    vec3 shakyPosition = position;
+    float amplitude = 0.02;
+
+    shakyPosition += vec3(
+        sin(time * 10.0 + position.x),
+        cos(time * 10.0 + position.y),
+        sin(time * 10.0 + position.z)
+    ) * amplitude;
+
+    vec4 newPos = vec4(shakyPosition, 1.0);
+    
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * newPos;
+    UVs = texCoords;
+    outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
+}
+'''
+
+fragmet_shader2 = '''
+#version 450 core
+
+out vec4 fragColor;
+
+uniform float time;
+
+void main()
+{
+    vec2 uv = gl_FragCoord.xy;
+    float offset = 0.01 * uv.x + 0.02 * uv.y;
+
+    vec3 rainbowColor = vec3(
+        cos(time + offset * 0.5),
+        cos(time + offset * 0.7),
+        cos(time + offset * 0.9)
+    );
+
+    fragColor = vec4(rainbowColor * 0.5 + 0.5, 1.0);
+}
+'''
+
+vertex_shader3 = '''
+#version 450 core
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 texCoords;
+layout (location = 2) in vec3 normals;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform float time;
+
+out vec2 UVs;
+out vec3 outNormals;
+
+void main()
+{
+    vec3 scaledPosition = position;
+    float scaleFactorX = sin(time) * 0.5 + 1.0;
+    float scaleFactorY = cos(time) * 0.5 + 1.0;
+
+    scaledPosition.x *= scaleFactorX;
+    scaledPosition.y *= scaleFactorY;
+
+    vec4 newPos = vec4(scaledPosition, 1.0);
+    
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * newPos;
+    UVs = texCoords;
+    outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
+}
+'''
+
+vertex_shader4 = '''
+#version 450 core
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 texCoords;
+layout (location = 2) in vec3 normals;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform float time;
+
+out vec2 UVs;
+out vec3 outNormals;
+
+void main()
+{
+    vec3 spiraledPosition = position;
+    float angle = time * 2.0;
+
+    float radius = length(position.xy);
+    spiraledPosition.x = radius * cos(angle);
+    spiraledPosition.y = radius * sin(angle);
+
+    vec4 newPos = vec4(spiraledPosition, 1.0);
+    
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * newPos;
+    UVs = texCoords;
+    outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
+}
+'''
+
+fragmet_shader3 = '''
+#version 450 core
+
+out vec4 fragColor;
+
+uniform float time;
+
+void main()
+{
+    vec2 uv = gl_FragCoord.xy / vec2(1920, 1080);
+    float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+
+    vec3 errorColor = vec3(
+        1.0,
+        0.0,
+        0.0
+    );
+
+    fragColor = vec4(errorColor * noise, 1.0);
+}
+'''
+
+fragmet_shader4 = '''
+#version 450 core
+
+out vec4 fragColor;
+
+uniform float time;
+
+void main()
+{
+    vec2 uv = gl_FragCoord.xy / vec2(1920, 1080);
+    float x = uv.x + time * 0.1;
+    float y = uv.y + time * 0.05;
+
+    float wave = sin(x * 10.0) + cos(y * 10.0);
+
+    vec3 waterColor = vec3(
+        0.0,
+        0.5 + 0.1 * wave,
+        1.0
+    );
+
+    fragColor = vec4(waterColor, 1.0);
+}
 '''
